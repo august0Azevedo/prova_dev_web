@@ -1,11 +1,9 @@
 package com.example.prova.api.service;
 
 
-
-import com.example.prova.api.persistence.entity.Treino;
-import com.example.prova.api.persistence.entity.Status;
-import com.example.prova.api.persistence.repository.TreinoRepository;
-
+import com.example.prova.api.entity.Treino;
+import com.example.prova.api.entity.StatusTreino;
+import com.example.prova.api.repository.TreinoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,26 +16,37 @@ public class TreinoService {
     @Autowired
     private TreinoRepository treinoRepository;
 
-    public Treino salvarTreino(Treino treino) {
+    public Treino criarTreino(Treino treino) {
         return treinoRepository.save(treino);
     }
 
-    public Optional<Treino> atualizarTreino(Long id, Treino treinoAtualizado) {
-        return treinoRepository.findById(id)
-                .map(t -> {
-                    t.setNumeroSeries(treinoAtualizado.getNumeroSeries());
-                    t.setRepeticoes(treinoAtualizado.getRepeticoes());
-                    t.setDescanso(treinoAtualizado.getDescanso());
-                    t.setStatus(treinoAtualizado.getStatus());
-                    return treinoRepository.save(t);
-                });
+    public Optional<Treino> buscarTreinoPorId(Long id) {
+        return treinoRepository.findById(id);
     }
 
-    public void excluirTreino(Long id) {
+    public List<Treino> buscarTreinosPorStatus(StatusTreino status) {
+        return treinoRepository.findByStatus(status);
+    }
+
+    public Treino atualizarTreino(Long id, Treino treinoAtualizado) {
+        if (treinoRepository.existsById(id)) {
+            treinoAtualizado.setId(id);
+            return treinoRepository.save(treinoAtualizado);
+        }
+        return null;
+    }
+
+    public void deletarTreino(Long id) {
         treinoRepository.deleteById(id);
     }
 
-    public List<Treino> buscarTreinosPorStatus(Status status) {
-        return treinoRepository.findByStatus(status);
+    public Treino atualizarStatusTreino(Long id, StatusTreino novoStatus) {
+        Optional<Treino> treinoOptional = treinoRepository.findById(id);
+        if (treinoOptional.isPresent()) {
+            Treino treino = treinoOptional.get();
+            treino.setStatus(novoStatus);
+            return treinoRepository.save(treino);
+        }
+        return null;
     }
 }
