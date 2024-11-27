@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+
 import java.util.Optional;
 
 @Service
@@ -15,6 +18,12 @@ public class TreinoService {
 
     @Autowired
     private TreinoRepository treinoRepository;
+
+    @GetMapping("/todos")
+    public ResponseEntity<List<Treino>> listarTodosTreinos() {
+        List<Treino> treinos = treinoRepository.findAll();
+        return ResponseEntity.ok(treinos);
+    }
 
     public Treino criarTreino(Treino treino) {
         return treinoRepository.save(treino);
@@ -49,4 +58,6 @@ public class TreinoService {
         }
         return null;
     }
+
+
 }

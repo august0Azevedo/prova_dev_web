@@ -36,9 +36,16 @@ public class TreinoController {
         return ResponseEntity.noContent().build();
     }
 
+
+
     @GetMapping
-    public ResponseEntity<List<Treino>> listarTreinosPorStatus(@RequestParam StatusTreino status) {
-        List<Treino> treinos = treinoService.buscarTreinosPorStatus(status);
-        return ResponseEntity.ok(treinos);
+    public ResponseEntity<List<Treino>> listarTreinos(@RequestParam(required = false) StatusTreino status) {
+        if (status != null) {
+            List<Treino> treinos = treinoService.buscarTreinosPorStatus(status);
+            return ResponseEntity.ok(treinos);
+        } else {
+            List<Treino> treinos = treinoService.listarTodosTreinos().getBody();
+            return ResponseEntity.ok(treinos);
+        }
     }
 }
